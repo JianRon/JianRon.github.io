@@ -229,6 +229,127 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/17/Day2-C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JianRon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BlackWings">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/17/Day2-C/" itemprop="url">IME Starters Try-outs 2018 - C</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-17T21:23:45+08:00">
+                2018-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>Author: JianRon</strong></p>
+<p>&emsp;&emsp;<strong>题意：</strong>给一个n$~(1\leqslant n \leqslant18)~$阶带边权完全图，找一条边权和最小的哈密顿路径,输出方案。<br>&emsp;&emsp;<strong>思路：</strong>经典的状压dp，记$~dp(mask,i)~$已经经过了$~mask~$为中二进制位值为$~1~$对应的点并停在第$~i~$号结点时的最小花费。转移方程如下：$~dp(mask,i) = min{dp(mask - 2^i,j) + cost(j,i)}~,其中2^i~\&amp;~mask = 2^i ~$<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> mod = <span class="number">1e9</span> + <span class="number">7</span>,base = <span class="number">21</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn = <span class="number">1e3</span> + <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> s[<span class="number">25</span>][<span class="number">25</span>][<span class="number">25</span>];</span><br><span class="line"><span class="keyword">int</span> cost[<span class="number">20</span>][<span class="number">20</span>],self[<span class="number">20</span>],tag[<span class="number">20</span>][<span class="number">20</span>];</span><br><span class="line"><span class="keyword">int</span> dp[<span class="number">1</span>&lt;&lt;<span class="number">19</span>][<span class="number">20</span>],pr[<span class="number">1</span>&lt;&lt;<span class="number">19</span>][<span class="number">20</span>];</span><br><span class="line"><span class="keyword">int</span> ans[maxn];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//printf("%d\n",1&lt;&lt;0);</span></span><br><span class="line">    <span class="keyword">int</span> n,m;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;n,&amp;m);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>;j &lt; base;j++) <span class="built_in">scanf</span>(<span class="string">"%s"</span>,s[i][j]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++) &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>;j &lt; base;j++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>;k &lt; base;k++)  self[i] += s[i][j][k] - <span class="string">'0'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = i + <span class="number">1</span>;j &lt; n;j++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>;k &lt; base;k++)&#123;</span><br><span class="line">                <span class="keyword">for</span>(<span class="keyword">int</span> l = <span class="number">0</span>;l &lt; base;l++)&#123;</span><br><span class="line">                    cost[i][j] += (s[i][k][l] - <span class="string">'0'</span>) ^ (s[j][k][l] - <span class="string">'0'</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            cost[j][i] = cost[i][j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>;j &lt; n;j++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(cost[i][j] &gt; m + self[j])&#123;</span><br><span class="line">                cost[i][j] = m + self[j];</span><br><span class="line">                tag[i][j] = <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">memset</span>(dp,<span class="number">1</span>,<span class="keyword">sizeof</span> dp);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++) dp[(<span class="number">1</span>&lt;&lt;i)][i] = self[i];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; (<span class="number">1</span>&lt;&lt;n);i++) &#123;</span><br><span class="line">        <span class="keyword">if</span>((i&amp;(i<span class="number">-1</span>)) == <span class="number">0</span>) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>;j &lt; n;j++) <span class="keyword">if</span>(i&amp;(<span class="number">1</span>&lt;&lt;j))&#123;</span><br><span class="line">            <span class="keyword">int</span> pre = i - (<span class="number">1</span>&lt;&lt;j);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>;k &lt; n;k++) <span class="keyword">if</span>(pre&amp;(<span class="number">1</span>&lt;&lt;k))&#123;</span><br><span class="line">                <span class="keyword">if</span>(dp[i][j] &gt; dp[pre][k] + cost[k][j])&#123;</span><br><span class="line">                    dp[i][j] = dp[pre][k] + cost[k][j];</span><br><span class="line">                    pr[i][j] = k;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> flag = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>;i &lt; n;i++) &#123;</span><br><span class="line">        <span class="keyword">if</span>(dp[(<span class="number">1</span>&lt;&lt;n)<span class="number">-1</span>][i] &lt; dp[(<span class="number">1</span>&lt;&lt;n)<span class="number">-1</span>][flag]) flag = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,dp[(<span class="number">1</span>&lt;&lt;n)<span class="number">-1</span>][flag]);</span><br><span class="line">    <span class="keyword">int</span> temp = (<span class="number">1</span>&lt;&lt;n) - <span class="number">1</span>,cnt = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(temp)&#123;</span><br><span class="line">        ans[cnt++] = flag;</span><br><span class="line">        temp -= <span class="number">1</span>&lt;&lt;flag;</span><br><span class="line">        flag = pr[temp+(<span class="number">1</span>&lt;&lt;flag)][flag];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,ans[cnt<span class="number">-1</span>]+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = cnt - <span class="number">2</span>;i &gt;= <span class="number">0</span>;i--)&#123;</span><br><span class="line">        <span class="keyword">int</span> to = ans[i],from = ans[i+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span>(tag[from][to]) <span class="built_in">puts</span>(<span class="string">"*"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,to+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/12/Day1-L/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -633,7 +754,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
