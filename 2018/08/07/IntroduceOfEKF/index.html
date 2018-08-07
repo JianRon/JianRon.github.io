@@ -81,14 +81,14 @@
 
 <meta name="description" content="扩展卡尔曼滤波器（EKF）的工作原理 线性系统和卡尔曼滤波(KF)SLAM过可以由程运动方程与观测方程的描述   \begin{cases}   x_k = f(x_{k-1},u_k) + w_k\\  z_{k,j} = h(y_j,x_k) + v_{k,j}\end{cases} \tag 1 其中$~xk~$表示$~k~$时刻的位姿,$~u_k~$表示运动状态，$~w_k，v{k,j}~">
 <meta property="og:type" content="article">
-<meta property="og:title" content="BlackWings">
+<meta property="og:title" content="Introduce of EKF">
 <meta property="og:url" content="http://yoursite.com/2018/08/07/IntroduceOfEKF/index.html">
 <meta property="og:site_name" content="BlackWings">
 <meta property="og:description" content="扩展卡尔曼滤波器（EKF）的工作原理 线性系统和卡尔曼滤波(KF)SLAM过可以由程运动方程与观测方程的描述   \begin{cases}   x_k = f(x_{k-1},u_k) + w_k\\  z_{k,j} = h(y_j,x_k) + v_{k,j}\end{cases} \tag 1 其中$~xk~$表示$~k~$时刻的位姿,$~u_k~$表示运动状态，$~w_k，v{k,j}~">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-07T15:12:50.528Z">
+<meta property="og:updated_time" content="2018-08-07T15:24:55.227Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="BlackWings">
+<meta name="twitter:title" content="Introduce of EKF">
 <meta name="twitter:description" content="扩展卡尔曼滤波器（EKF）的工作原理 线性系统和卡尔曼滤波(KF)SLAM过可以由程运动方程与观测方程的描述   \begin{cases}   x_k = f(x_{k-1},u_k) + w_k\\  z_{k,j} = h(y_j,x_k) + v_{k,j}\end{cases} \tag 1 其中$~xk~$表示$~k~$时刻的位姿,$~u_k~$表示运动状态，$~w_k，v{k,j}~">
 
 
@@ -125,7 +125,7 @@
 
 
 
-  <title> | BlackWings</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>Introduce of EKF | BlackWings</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -249,7 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">Introduce of EKF</h1>
         
 
         <div class="post-meta">
@@ -261,7 +261,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-07T23:15:23+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-07T23:19:00+08:00">
                 2018-08-07
               </time>
             
@@ -679,7 +679,7 @@ z_k = C_{k}x_{k} + v_k\end{cases}~~~~k = 1,...,N \tag 8</script></blockquote>
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
 
 
 
@@ -732,6 +732,26 @@ z_k = C_{k}x_{k} + v_k\end{cases}~~~~k = 1,...,N \tag 8</script></blockquote>
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
