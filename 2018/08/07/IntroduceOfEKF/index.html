@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="扩展卡尔曼滤波器（EKF）的工作原理 线性系统和卡尔曼滤波(KF)SLAM过可以由程运动方程与观测方程的描述   \begin{cases}   x_k = f(x_{k-1},u_k) + w_k\\  z_{k,j} = h(y_j,x_k) + v_{k,j}\end{cases} \tag 1 其中$~xk~$表示$~k~$时刻的位姿,$~u_k~$表示运动状态，$~w_k，v{k,j}~">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BlackWings">
+<meta property="og:url" content="http://yoursite.com/2018/08/07/IntroduceOfEKF/index.html">
+<meta property="og:site_name" content="BlackWings">
+<meta property="og:description" content="扩展卡尔曼滤波器（EKF）的工作原理 线性系统和卡尔曼滤波(KF)SLAM过可以由程运动方程与观测方程的描述   \begin{cases}   x_k = f(x_{k-1},u_k) + w_k\\  z_{k,j} = h(y_j,x_k) + v_{k,j}\end{cases} \tag 1 其中$~xk~$表示$~k~$时刻的位姿,$~u_k~$表示运动状态，$~w_k，v{k,j}~">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-07T15:12:50.528Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BlackWings">
+<meta name="twitter:description" content="扩展卡尔曼滤波器（EKF）的工作原理 线性系统和卡尔曼滤波(KF)SLAM过可以由程运动方程与观测方程的描述   \begin{cases}   x_k = f(x_{k-1},u_k) + w_k\\  z_{k,j} = h(y_j,x_k) + v_{k,j}\end{cases} \tag 1 其中$~xk~$表示$~k~$时刻的位姿,$~u_k~$表示运动状态，$~w_k，v{k,j}~">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/07/IntroduceOfEKF/"/>
+
+
+
+
+
+  <title> | BlackWings</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BlackWings</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/07/IntroduceOfEKF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JianRon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BlackWings">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-07T23:15:23+08:00">
+                2018-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="扩展卡尔曼滤波器（EKF）的工作原理"><a href="#扩展卡尔曼滤波器（EKF）的工作原理" class="headerlink" title="扩展卡尔曼滤波器（EKF）的工作原理"></a>扩展卡尔曼滤波器（EKF）的工作原理</h1><hr>
+<h2 id="线性系统和卡尔曼滤波-KF"><a href="#线性系统和卡尔曼滤波-KF" class="headerlink" title="线性系统和卡尔曼滤波(KF)"></a>线性系统和卡尔曼滤波(KF)</h2><p><strong>SLAM过可以由程运动方程与观测方程的描述</strong> </p>
+<blockquote>
+<script type="math/tex; mode=display">\begin{cases} 
+ x_k = f(x_{k-1},u_k) + w_k\\
+ z_{k,j} = h(y_j,x_k) + v_{k,j}\end{cases} \tag 1</script></blockquote>
+<p>其中$~x<em>k~$表示$~k~$时刻的位姿,$~u_k~$表示运动状态，$~w_k，v</em>{k,j}~$为噪声，$~y<em>j~$表示路标，$~z</em>{k,j}~$为在$~x_k~$情况下看到$~y_j~$所残生的观测数据。<br><strong>由于每个方程都受到噪声的影响所以，$~x，y~$是服从某种概率分布的随机变量</strong></p>
+<hr>
+<ul>
+<li>为了方便说明，我们将所有的待估计的量放在一起<blockquote>
+<script type="math/tex; mode=display">x_k\triangleq\{x_k,y_1,...,y_m\} .\tag 2</script></blockquote>
+</li>
+<li>同时将所有$~k~$时刻的观测记为$~z_k~$。</li>
+</ul>
+<ul>
+<li>所以上面的方程可以重写成<blockquote>
+<script type="math/tex; mode=display">\begin{cases} 
+x_k = f(x_{k-1},u_k) + w_k\\
+z_{k} = h(x_k) + v_{k}\end{cases}~~~~k = 1,...,N .\tag 3</script></blockquote>
+</li>
+</ul>
+<hr>
+<ul>
+<li>现在考虑第$~k~$时刻的情况,我们用从$~0~$到$~k~$的数据来估计现在的状态，即<blockquote>
+<script type="math/tex; mode=display">~P(x_k|x_0,u_{1:k},z_{1:k}).~ \tag 4</script></blockquote>
+</li>
+<li><p>根据贝叶斯法制$~P(A|B)~ \propto P(B|A)P(A)~$</p>
+<blockquote>
+<script type="math/tex; mode=display">~P(x_k|x_0,u_{1:k},z_{1:k})\propto P(z_k|x_k)P(x_k|x_0,u_{1:k},z_{1,k-1}).\tag 5~</script></blockquote>
+<p>$~u_{1:k},z{1:k-1}~$是两边的共同条件，差别仅仅在于交换了$~x_k,z_k~$</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li><p>对于（5）中右边第二项可以按照$~x_{k-1}~$展开</p>
+<blockquote>
+<script type="math/tex; mode=display">P(x_k|x_0,u_{1:k},z_{1,k-1}) = \int P(x_k|x_{k-1},x_0,u_{1:k},z_{1,k-1})P(x_{k-1}|x_0,u_{1:k},z_{1,k-1}){\rm d}x_{k-1}.~\tag 6</script></blockquote>
+<p>显然，我们如果想通过更远的状态来预测当前状态的分布，只需要继续展开就可以了。但是现在我们只考虑$~k-1~$对$~k-1~$的影响，对于这个式子的处理将引出后端中的两大类。</p>
+<ul>
+<li>基于一阶马尔可夫性的滤波器方法：认为$~k~$只与$~k-1~$有关。 </li>
+<li>非线性优化方法：考虑$~k~$与之间的所有关系。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="滤波器模型"><a href="#滤波器模型" class="headerlink" title="滤波器模型"></a>滤波器模型</h2><p>在卡尔曼滤波中，由于马尔科夫性，我们认为当前时刻只和上一时刻有关，也就是说$~k-1~$之间的影响我们可以不考虑。于是，(6)的右侧的部分可以改写成以下形式：</p>
+<blockquote>
+<script type="math/tex; mode=display">P(x_k|x_{k-1},u_k)P(x_{k-1}|x_0,u_{1:k-1},z_{1:k-1}) \tag7</script></blockquote>
+<h3 id="线性系统"><a href="#线性系统" class="headerlink" title="线性系统"></a>线性系统</h3><p>我们先看看在线性系统下怎么解决这个问题。<br>因为是线性系统，那么我们先用线性方程来描述（1）:</p>
+<blockquote>
+<script type="math/tex; mode=display">\begin{cases} 
+x_k = A_{k}x_{k-1}+u_k+w_k\\
+z_k = C_{k}x_{k} + v_k\end{cases}~~~~k = 1,...,N \tag 8</script></blockquote>
+<p>并且假设$~w_k~$和$~v_k~$均满足高斯分布$~w_k\sim N(0,R)~$,$~v_k\sim N(0,Q)~$</p>
+<p>同时我们假设已经知道了$k-1$时刻的后验状态估计$\hat{x}<em>{k-1}$，以及协方差$\hat{P}</em>{k-1}$那么(7)式右侧为：</p>
+<blockquote>
+<script type="math/tex; mode=display">P(x_k|x_0,u_{1:k-1},z_{1:k-1}) = N(A_{k}\hat{x}_{k-1} + u_k,A_{k}\hat{P}_{k-1}A_{k}^T + R) \tag 9</script></blockquote>
+<p><strong>在记号上我们对先验和后验做以下区别，把$~\hat{x}~$记为后验，$~\bar{x}~$记为先验</strong><br>上式说明了在已经知道$k-1$状态时对$~k~$时状态分布的估计，即<strong>预测</strong>,也是$~k~$状态时的先验。类似的我们写出观测数据的状态估计:</p>
+<blockquote>
+<script type="math/tex; mode=display">P(z_k|x_k) = N(C_{k}x_k,Q). \tag {10}</script></blockquote>
+<p>为了方便，我们记:</p>
+<blockquote>
+<script type="math/tex; mode=display">\bar{x}_k=A_k\hat{x}_{k-1}+u_k,~~~\bar{P}_k=A_{k}\hat{P}_{k-1}A_{k}^T+R \tag{11}</script></blockquote>
+<p>我们的目的是求出$~\hat{x}_k~$,也就是求解出(7)式的乘积。我们知道最后$~\hat{x}_k~$也是一个正态分布，即:</p>
+<blockquote>
+<script type="math/tex; mode=display">N(\hat{x}_k,\hat{P}_k) = N(C_{k}x_k,Q)\cdot N(\bar{x}_k,\bar{P}_k). \tag{12}</script></blockquote>
+<p>也就是说我们知道两边的形式是一样的，那么我们只需要比较它们的指数部分就可以了：</p>
+<blockquote>
+<script type="math/tex; mode=display">p(x) = \frac{1}{\sqrt{(2\pi)^N} det(\Sigma)}exp(-\frac{1}{2}(x-u)^T\Sigma^{-1}(x-u))~~~~(高阶高斯分布)</script><p>将(12)式指数部分展开：</p>
+<script type="math/tex; mode=display">(x_k-\hat{x}_k)^T \hat{P}_{k}^{-1}(x_k-\hat{x}_k) = (z_k-C_{k}x_{k})^{T}Q^{-1}(z_k-C_{k}x_{k})+(x_k-\bar{x}_k)^{T}\bar{P}_{k}^{-1}(x_k-\bar{x}_k).~~(13)</script></blockquote>
+<p>比较$x_k$的二次系数:</p>
+<blockquote>
+<script type="math/tex; mode=display">\hat{P}_k^{-1}=C_{k}^{T}Q^{-1}C_k+P_{k}^{-1} \tag{14}</script><p>两边左乘上$~\hat{P}_k~$，得</p>
+<script type="math/tex; mode=display">I=\hat{P}_kC_{k}^{T}Q^{-1}C_k+\hat{P}_kP_{k}^{-1} \tag{15}</script><p>记</p>
+<script type="math/tex; mode=display">K=\hat{P}_kC_{k}^{T}Q^{-1} \tag{16}$$则$$I=KC_k+\hat{P}_kP_{k}^{-1} \tag{17}</script></blockquote>
+<p>比较一次系数(约掉常数后)：</p>
+<blockquote>
+<script type="math/tex; mode=display">\hat{x}_{k}^T\hat{P}_{k}^{-1}x_k = z_{k}^{T}Q^{-1}x_k+x_{k}^T\bar{P}_{k}^{-1}x_k \tag{18}</script><p>同时右乘上$~x_{k}^-1~$,再转置：</p>
+<script type="math/tex; mode=display">\hat{P}_{x}^{-1}\hat{x}_k=C_{k}^{T}Q^{-1}z_k+\bar{P}_{k}^{-1}\bar{x}_k \tag{19}</script><p>左乘$~\hat{P}_k~$</p>
+<script type="math/tex; mode=display">\hat{x}_k=\hat{P}_{x}C_{k}^{T}Q^{-1}z_k+\hat{P}_{x}\bar{P}_{k}^{-1}\bar{x}_k \tag{20}</script><p>将(16),(17)式带入得</p>
+<script type="math/tex; mode=display">\hat{x}_k=\bar{x}_k+K(z_k-C_kx_k) \tag{21}</script></blockquote>
+<p>这样我们就从先验（预测）得到了后验。其中$~K~$被称为<strong>卡尔曼增益</strong>。从（21）式子可以知道，我们的为了求出后验，就要求出卡尔曼增益。</p>
+<hr>
+<h2 id="非线性系统和扩展卡尔曼滤波-EKF"><a href="#非线性系统和扩展卡尔曼滤波-EKF" class="headerlink" title="非线性系统和扩展卡尔曼滤波(EKF)"></a>非线性系统和扩展卡尔曼滤波(EKF)</h2><p>我们上面的推导都是基于线性情况下的，但是SLAM中的运动方程和观测方程显然都不是线性的。为了把卡尔曼滤波器的结果放到非线性系统里，我们引入了扩展卡尔曼滤波器。具体做法就是在某个点附近将运动方程和观测方程做一阶泰勒展开，按照线性的方式推导。下面给出$~x_k,z_k~$一阶展开的形式;</p>
+<blockquote>
+<script type="math/tex; mode=display">x_k\approx f(\hat{x}_{k-1},u_k)+\frac{\delta{f}}{\delta{x_{k-1}}}\Bigg|_{\hat{x}_{k-1}}(x_{k-1}-\hat{x}_{k-1}) + w_k\\~\\z_k\approx h(\bar{x}_k)+\frac{\delta h}{\delta x_k}\Bigg|_{x_k}(x_k-\bar{x}_k)+n_k</script><p>记<script type="math/tex">H=\frac{\delta h}{\delta x_k}\Bigg|_{x_k}</script><br>类似于卡尔曼滤波的推导将会有<strong>卡尔曼增益$~K_k~$</strong><script type="math/tex">K_k=P_kH^T(H\bar{P}_kH^T+Q_k)^{-1}</script>以及后验概率：<script type="math/tex">\hat{x}_k=\bar{x}_k+K_k(z_k-h(\bar{x}_k))~,~\hat{P}_k=(I-K_kH)\bar{P}_k</script></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/17/Day2-C/" rel="next" title="IME Starters Try-outs 2018 - C">
+                <i class="fa fa-chevron-left"></i> IME Starters Try-outs 2018 - C
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">JianRon</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展卡尔曼滤波器（EKF）的工作原理"><span class="nav-number">1.</span> <span class="nav-text">扩展卡尔曼滤波器（EKF）的工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线性系统和卡尔曼滤波-KF"><span class="nav-number">1.1.</span> <span class="nav-text">线性系统和卡尔曼滤波(KF)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#滤波器模型"><span class="nav-number">1.2.</span> <span class="nav-text">滤波器模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线性系统"><span class="nav-number">1.2.1.</span> <span class="nav-text">线性系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非线性系统和扩展卡尔曼滤波-EKF"><span class="nav-number">1.3.</span> <span class="nav-text">非线性系统和扩展卡尔曼滤波(EKF)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JianRon</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>
